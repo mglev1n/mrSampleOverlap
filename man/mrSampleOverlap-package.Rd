@@ -8,8 +8,17 @@
 \description{
 A function to estimate bias due to sample overlap in Mendelian Randomization studies.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/mglev1n/mrSampleOverlap}
+  \item \url{https://mglev1n.github.io/mrSampleOverlap/}
+  \item Report bugs at \url{https://github.com/mglev1n/mrSampleOverlap/issues}
+}
+
+}
 \author{
-\strong{Maintainer}: Levin Michael \email{michael.levin@pennmedicine.upenn.edu} (\href{https://orcid.org/0000-0002-9937-9932}{ORCID})
+\strong{Maintainer}: Michael Levin \email{michael.levin@pennmedicine.upenn.edu} (\href{https://orcid.org/0000-0002-9937-9932}{ORCID})
 
 }
 \keyword{internal}

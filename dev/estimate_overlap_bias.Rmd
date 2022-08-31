@@ -35,7 +35,7 @@ fusen::fill_description(
     Title = "Estimate bias due to sample overlap in Mendelian Randomization studies",
     Description = "A function to estimate bias due to sample overlap in Mendelian Randomization studies.",
     `Authors@R` = c(
-      person("Levin", "Michael", email = "michael.levin@pennmedicine.upenn.edu", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-9937-9932"))
+      person("Michael", "Levin", email = "michael.levin@pennmedicine.upenn.edu", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-9937-9932"))
     )
   )
 )
@@ -165,7 +165,7 @@ Build your package from this very Rmd using `fusen::inflate()`
 fusen::inflate(flat_file = "dev/estimate_overlap_bias.Rmd")
 
 # Build documentation
-usethis::use_pkgdown_github_pages()
+# usethis::use_pkgdown_github_pages()
 ```
 
 <!-- 

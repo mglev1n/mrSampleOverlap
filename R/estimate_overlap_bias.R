@@ -16,7 +16,7 @@
 #' @import dplyr
 #' @import magrittr
 #'
-#' @return A a [tibble][tibble::tibble-package] containing columns for the bias and type1_error
+#' @return A [tibble][tibble::tibble-package] containing columns for the bias and type1_error
 #' @export
 #'
 #' @examples

@@ -7,7 +7,9 @@
 <!-- badges: end -->
 
 The goal of mrSampleOverlap is to estimate bias due to participant
-overlap in Mendelian Randomization studies
+overlap in Mendelian Randomization studies. This package implements code
+described in Burgess et. al. 2016 (DOI:
+[10.1002/gepi.21998](https://doi.org/10.1002/gepi.21998))
 
 ## Installation
 

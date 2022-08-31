@@ -39,7 +39,7 @@ estimate_overlap_bias(
 \item{var_y}{(numeric) Variance in the exposure; default is 1 when the exposure is reported in standard deviation units}
 }
 \value{
-A a \link[tibble:tibble-package]{tibble} containing columns for the bias and type1_error
+A \link[tibble:tibble-package]{tibble} containing columns for the bias and type1_error
 }
 \description{
 Estimate bias due to sample overlap
