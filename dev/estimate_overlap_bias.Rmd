@@ -1,5 +1,5 @@
 ---
-title: "flat_teaching.Rmd for working package"
+title: "mrSampleOverlap"
 output: html_document
 editor_options: 
   chunk_output_type: console
@@ -163,6 +163,9 @@ Build your package from this very Rmd using `fusen::inflate()`
 ```{r development-inflate, eval=FALSE}
 # Execute in the console directly
 fusen::inflate(flat_file = "dev/estimate_overlap_bias.Rmd")
+
+# Build documentation
+usethis::use_pkgdown_github_pages()
 ```
 
 <!-- 
