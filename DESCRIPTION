@@ -21,3 +21,5 @@ VignetteBuilder:
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.0
+URL: https://github.com/mglev1n/mrSampleOverlap
+BugReports: https://github.com/mglev1n/mrSampleOverlap/issues
