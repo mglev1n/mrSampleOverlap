@@ -1,0 +1,173 @@
+---
+title: "flat_teaching.Rmd for working package"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+<!-- 
+Run this 'development' chunk
+
+Store every call to library() that you need to run chunks line by line, as in a classical Rmd for analysis
+-->
+
+```{r development, include=FALSE}
+library(tidyverse)
+library(testthat)
+library(devtools)
+library(usethis)
+```
+
+<!--
+# Description of your package
+
+This will fill the description of your package.
+Fill and run the content of this chunk, before anything else. 
+
+Note: when you will use other flat templates, this part will be in a separate file. Do not be surprised!
+--> 
+
+```{r description, eval=FALSE}
+# Describe your package
+fusen::fill_description(
+  pkg = here::here(),
+  fields = list(
+    Title = "Estimate bias due to sample overlap in Mendelian Randomization studies",
+    Description = "A function to estimate bias due to sample overlap in Mendelian Randomization studies.",
+    `Authors@R` = c(
+      person("Levin", "Michael", email = "michael.levin@pennmedicine.upenn.edu", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-9937-9932"))
+    )
+  )
+)
+# Define License with use_*_license()
+usethis::use_mit_license("Michael Levin")
+usethis::use_pipe()
+usethis::use_tibble()
+```
+
+# Estimate bias due to sample overlap
+
+This function allows the user to estimate bias due to sample overlap in Mendelian randomization studies using the equations published in Burgess et. al. 2016 (DOI: [10.1002/gepi.21998](https://doi.org/10.1002/gepi.21998))
+
+<!-- 
+This first section shows:
+
+- the three parts necessary for a package: 'function', 'examples' and 'tests'.  
+  + Note that the three following chunks have names accordingly.
+
+-->
+
+```{r function-estimate_overlap_bias}
+#' Estimate bias due to sample overlap
+#'
+#' @param samplesize_exposure (numeric) Sample size of population used to define genetic instrument for the exposure of interest
+#' @param samplesize_outcome (numeric) Sample size of population used for the outcome of interest
+#' @param n_variants (numeric) Number of genetic variants included in genetic instrument for the exposure of interest
+#' @param rsq_exposure (numeric) R^2^ value (coefficient of determination) of genetic instrument for the exposure of interest; used to estimate F-statistic
+#' @param exp_f (numeric; optional) F-statistic for the genetic instrument (if provided, this value will be used, rather than an estimate based on the R^2^)
+#' @param case_prop (numeric; optional) Proportion of cases (eg. cases/total samplesize) if outcome is binary
+#' @param ols_bias (numeric) Observational (biased) effect estimate (if known); otherwise, provide a hypothetical value
+#' @param overlap_prop (numeric; range = 0 to 1) Proportion of overlapping samples between exposure and outcome studies (if known); otherwise, provide a hypothetical value
+#' @param var_x (numeric) Variance in the exposure; default is 1 when the exposure is reported in standard deviation units
+#' @param var_y (numeric) Variance in the exposure; default is 1 when the exposure is reported in standard deviation units
+#'
+#' @import dplyr
+#' @import magrittr
+#'
+#' @return A [tibble][tibble::tibble-package] containing columns for the bias and type1_error
+#' @export
+#'
+estimate_overlap_bias <- function(samplesize_exposure, samplesize_outcome, n_variants, rsq_exposure, exp_f = NULL, case_prop = 0, ols_bias, overlap_prop, var_x = 1, var_y = 1) {
+  # adapted from Burgess et. al. (2016) PMID: 27625185
+  
+  if(!is.null(exp_f)) {
+    expf <- exp_f
+  } else {
+    expf <- (samplesize_exposure - n_variants - 1)/n_variants * rsq_exposure/(1 - rsq_exposure)
+  }
+  
+  if(case_prop == 0) {
+    var <- var_y/(samplesize_outcome * var_x * rsq_exposure)
+  } else {
+    var <- 1/(samplesize_outcome * rsq_exposure * var_x * case_prop * (1 - case_prop))
+  }
+  
+  bias <- ols_bias * overlap_prop * (1/expf)
+  
+  type1_error <- 2 - pnorm(1.96 + bias / sqrt(var)) - pnorm(1.96 - bias / sqrt(var))
+  
+  return(tibble(bias = bias, type1_error = type1_error))
+}
+```
+
+<!--
+Here is an example on how to use the function.
+This should be a reproducible and working example
+-->
+
+```{r examples-estimate_overlap_bias}
+# Binary outcome
+estimate_overlap_bias(samplesize_exposure = 361194,
+                      samplesize_outcome = 1125328,
+                      case_prop = 0.035,
+                      rsq_exposure = 0.068,
+                      n_variants = 196,
+                      ols_bias = 0.2,
+                      overlap_prop = 0.3)
+
+# Continuous outcome
+estimate_overlap_bias(samplesize_exposure = 361194,
+                      samplesize_outcome = 1125328,
+                      rsq_exposure = 0.068,
+                      n_variants = 196,
+                      ols_bias = 0.2,
+                      overlap_prop = 0.3)
+```
+
+<!--
+Here are some unit tests to verify the function works as expected.
+-->
+
+```{r tests-estimate_overlap_bias}
+test_that("estimate_overlap_bias works", {
+  res_df_bin <- estimate_overlap_bias(samplesize_exposure = 361194,
+                      samplesize_outcome = 1125328,
+                      case_prop = 0.035,
+                      rsq_exposure = 0.068,
+                      n_variants = 196,
+                      ols_bias = 0.2,
+                      overlap_prop = 0.3)
+  
+  res_df_continuous <- estimate_overlap_bias(samplesize_exposure = 361194,
+                      samplesize_outcome = 1125328,
+                      rsq_exposure = 0.068,
+                      n_variants = 196,
+                      ols_bias = 0.2,
+                      overlap_prop = 0.3)
+  
+  expect_equal(nrow(res_df_bin), 1)
+  expect_equal(ncol(res_df_bin), 2)
+  expect_equal(nrow(res_df_continuous), 1)
+  expect_equal(ncol(res_df_continuous), 2)
+})
+```
+
+<!-- 
+# Inflate your package
+
+You're one inflate from paper to box.
+Build your package from this very Rmd using `fusen::inflate()` 
+-->
+
+
+```{r development-inflate, eval=FALSE}
+# Execute in the console directly
+fusen::inflate(flat_file = "dev/estimate_overlap_bias.Rmd")
+```
+
+<!-- 
+- Verify your `"DESCRIPTION"` file has been updated
+- Verify your function is in `"R/"` directory
+- Verify your test is in `"tests/testthat/"` directory
+- Verify this Rmd appears in `"vignettes/"` directory 
+-->
