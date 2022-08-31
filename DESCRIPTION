@@ -3,7 +3,7 @@ Title: Estimate Bias Due To Sample Overlap In Mendelian Randomization
     Studies
 Version: 0.0.0.9000
 Authors@R: 
-    person("Levin", "Michael", , "michael.levin@pennmedicine.upenn.edu", role = c("aut", "cre"),
+    person("Michael", "Levin", , "michael.levin@pennmedicine.upenn.edu", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-9937-9932"))
 Description: A function to estimate bias due to sample overlap in
     Mendelian Randomization studies.
