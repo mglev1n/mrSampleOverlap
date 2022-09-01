@@ -34,7 +34,10 @@ sample overlap and observational bias.
 
 First, we will use the `TwoSampleMR` package to query the [MRC-IEU
 OpenGWAS Project](https://gwas.mrcieu.ac.uk/) for summary GWAS data to
-use for our exposure and outcome:
+use for our exposure and outcome. We will consider LDL cholesterol
+(Willer et. al. 2013) as our exposure, and Coronary Artery Disease (Van
+der Harst et. al. 2017; 122,733 cases and 424,528 controls) as our
+outcome:
 
 ``` r
 # devtools::install_github("MRCIEU/TwoSampleMR")
@@ -79,7 +82,7 @@ Finally, we can estimate bias in our MR estimates using the
 ``` r
 bias_res <- dat_summarized %>%
   crossing(grid) %>%
-  mutate(res = estimate_overlap_bias(samplesize_exposure = samplesize_exposure, samplesize_outcome = samplesize_outcome, n_variants = n_variants, rsq_exposure = rsq_exposure, overlap_prop = overlap_prop, ols_bias = ols_bias)) %>%
+  mutate(res = estimate_overlap_bias(samplesize_exposure = samplesize_exposure, samplesize_outcome = samplesize_outcome, n_variants = n_variants, rsq_exposure = rsq_exposure, overlap_prop = overlap_prop, ols_bias = ols_bias, case_prop = 122733/547261)) %>%
   unnest(res)
 ```
 
