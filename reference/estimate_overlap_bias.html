@@ -60,6 +60,7 @@
 <span>  <span class="va">n_variants</span>,</span>
 <span>  <span class="va">rsq_exposure</span>,</span>
 <span>  exp_f <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  lci_95 <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  case_prop <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  <span class="va">ols_bias</span>,</span>
 <span>  <span class="va">overlap_prop</span>,</span>
@@ -88,6 +89,10 @@
 
 <dt>exp_f</dt>
 <dd><p>(numeric; optional) F-statistic for the genetic instrument (if provided, this value will be used, rather than an estimate based on the R^2^)</p></dd>
+
+
+<dt>lci_95</dt>
+<dd><p>(logical; default = FALSE) If TRUE, the function will return estimates of bias and type 1 error based on the lower limit of the one-sided 95% confidence interval of the F-statistic, which may represent a more conservative/less optimistic estimate of bias</p></dd>
 
 
 <dt>case_prop</dt>
@@ -120,25 +125,29 @@
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Binary outcome</span></span></span>
-<span class="r-in"><span><span class="fu">estimate_overlap_bias</span><span class="op">(</span>samplesize_exposure <span class="op">=</span> <span class="fl">361194</span>,</span></span>
-<span class="r-in"><span>                      samplesize_outcome <span class="op">=</span> <span class="fl">1125328</span>,</span></span>
-<span class="r-in"><span>                      case_prop <span class="op">=</span> <span class="fl">0.035</span>,</span></span>
-<span class="r-in"><span>                      rsq_exposure <span class="op">=</span> <span class="fl">0.068</span>,</span></span>
-<span class="r-in"><span>                      n_variants <span class="op">=</span> <span class="fl">196</span>,</span></span>
-<span class="r-in"><span>                      ols_bias <span class="op">=</span> <span class="fl">0.2</span>,</span></span>
-<span class="r-in"><span>                      overlap_prop <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">estimate_overlap_bias</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  samplesize_exposure <span class="op">=</span> <span class="fl">361194</span>,</span></span>
+<span class="r-in"><span>  samplesize_outcome <span class="op">=</span> <span class="fl">1125328</span>,</span></span>
+<span class="r-in"><span>  case_prop <span class="op">=</span> <span class="fl">0.035</span>,</span></span>
+<span class="r-in"><span>  rsq_exposure <span class="op">=</span> <span class="fl">0.068</span>,</span></span>
+<span class="r-in"><span>  n_variants <span class="op">=</span> <span class="fl">196</span>,</span></span>
+<span class="r-in"><span>  ols_bias <span class="op">=</span> <span class="fl">0.2</span>,</span></span>
+<span class="r-in"><span>  overlap_prop <span class="op">=</span> <span class="fl">0.3</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 2</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       bias type1_error</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> 0.000<span style="text-decoration: underline;">446</span>      0.050<span style="text-decoration: underline;">1</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Continuous outcome</span></span></span>
-<span class="r-in"><span><span class="fu">estimate_overlap_bias</span><span class="op">(</span>samplesize_exposure <span class="op">=</span> <span class="fl">361194</span>,</span></span>
-<span class="r-in"><span>                      samplesize_outcome <span class="op">=</span> <span class="fl">1125328</span>,</span></span>
-<span class="r-in"><span>                      rsq_exposure <span class="op">=</span> <span class="fl">0.068</span>,</span></span>
-<span class="r-in"><span>                      n_variants <span class="op">=</span> <span class="fl">196</span>,</span></span>
-<span class="r-in"><span>                      ols_bias <span class="op">=</span> <span class="fl">0.2</span>,</span></span>
-<span class="r-in"><span>                      overlap_prop <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">estimate_overlap_bias</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  samplesize_exposure <span class="op">=</span> <span class="fl">361194</span>,</span></span>
+<span class="r-in"><span>  samplesize_outcome <span class="op">=</span> <span class="fl">1125328</span>,</span></span>
+<span class="r-in"><span>  rsq_exposure <span class="op">=</span> <span class="fl">0.068</span>,</span></span>
+<span class="r-in"><span>  n_variants <span class="op">=</span> <span class="fl">196</span>,</span></span>
+<span class="r-in"><span>  ols_bias <span class="op">=</span> <span class="fl">0.2</span>,</span></span>
+<span class="r-in"><span>  overlap_prop <span class="op">=</span> <span class="fl">0.3</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 2</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       bias type1_error</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
