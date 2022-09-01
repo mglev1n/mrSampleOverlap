@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mrSampleOverlap</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -145,7 +145,7 @@ Here are some unit tests to verify the function works as expected.
 <h3 id="complex-example">Complex Example<a class="anchor" aria-label="anchor" href="#complex-example"></a>
 </h3>
 <p>Here, we will use the <code>estimate_overlap_bias</code> function in a more complex example, to estimate the bias across a range of possible values of sample overlap and observational bias.</p>
-<p>First, we will use the <code>TwoSampleMR</code> package to query the <a href="https://gwas.mrcieu.ac.uk/" class="external-link">MRC-IEU OpenGWAS Project</a> for summary GWAS data to use for our exposure and outcome:</p>
+<p>First, we will use the <code>TwoSampleMR</code> package to query the <a href="https://gwas.mrcieu.ac.uk/" class="external-link">MRC-IEU OpenGWAS Project</a> for summary GWAS data to use for our exposure and outcome. We will consider LDL cholesterol (Willer et. al. 2013) as our exposure, and Coronary Artery Disease (Van der Harst et. al. 2017; 122,733 cases and 424,528 controls) as our outcome:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">TwoSampleMR</span><span class="op">)</span></span>
@@ -174,7 +174,7 @@ Here are some unit tests to verify the function works as expected.
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bias_res</span> <span class="op">&lt;-</span> <span class="va">dat_summarized</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">crossing</span><span class="op">(</span><span class="va">grid</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">mutate</span><span class="op">(</span>res <span class="op">=</span> <span class="fu"><a href="../reference/estimate_overlap_bias.html">estimate_overlap_bias</a></span><span class="op">(</span>samplesize_exposure <span class="op">=</span> <span class="va">samplesize_exposure</span>, samplesize_outcome <span class="op">=</span> <span class="va">samplesize_outcome</span>, n_variants <span class="op">=</span> <span class="va">n_variants</span>, rsq_exposure <span class="op">=</span> <span class="va">rsq_exposure</span>, overlap_prop <span class="op">=</span> <span class="va">overlap_prop</span>, ols_bias <span class="op">=</span> <span class="va">ols_bias</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>res <span class="op">=</span> <span class="fu"><a href="../reference/estimate_overlap_bias.html">estimate_overlap_bias</a></span><span class="op">(</span>samplesize_exposure <span class="op">=</span> <span class="va">samplesize_exposure</span>, samplesize_outcome <span class="op">=</span> <span class="va">samplesize_outcome</span>, n_variants <span class="op">=</span> <span class="va">n_variants</span>, rsq_exposure <span class="op">=</span> <span class="va">rsq_exposure</span>, overlap_prop <span class="op">=</span> <span class="va">overlap_prop</span>, ols_bias <span class="op">=</span> <span class="va">ols_bias</span>, case_prop <span class="op">=</span> <span class="fl">122733</span><span class="op">/</span><span class="fl">547261</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">unnest</span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></code></pre></div>
 <p>We can optionally plot our results. We see that as the proportion of sample overlap increases, so does type 1 error, while bias remains relatively small. Type 1 error and bias are also magnified as the bias in the observational estimate increases:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
