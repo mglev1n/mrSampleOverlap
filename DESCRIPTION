@@ -23,6 +23,8 @@ Suggests:
     tidyr,
     tidyverse,
     TwoSampleMR
+Remotes:
+    MRCIEU/TwoSampleMR
 VignetteBuilder: 
     knitr
 Encoding: UTF-8
