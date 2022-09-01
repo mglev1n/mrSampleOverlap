@@ -91,7 +91,7 @@ Here, we will use the `estimate_overlap_bias` function in a more complex example
 
 First, we will use the `TwoSampleMR` package to query the [MRC-IEU OpenGWAS Project](https://gwas.mrcieu.ac.uk/) for summary GWAS data to use for our exposure and outcome:
 
-```{r}
+```{r eval = FALSE}
 library(tidyverse)
 library(TwoSampleMR)
 library(mrSampleOverlap)
@@ -109,7 +109,7 @@ dat_harmonized <- harmonise_data(ldl_exposure, cad_outcome) %>%
 
 Next, we use `TwoSampleMR::add_rsq()` to add the R^2^ value necessary to calculate bias, and summarize:
 
-```{r}
+```{r eval = FALSE}
 dat_summarized <- dat_harmonized %>%
   add_rsq() %>%
   group_by(exposure) %>%
@@ -118,25 +118,23 @@ dat_summarized <- dat_harmonized %>%
 
 We can use the `tidyr::crossing()` function to generate a grid containing a range of values for sample overlap and observational bias
 
-```{r}
+```{r eval = FALSE}
 grid <- tidyr::crossing(overlap_prop = seq(0, 1, 0.1),
                         ols_bias = seq(0, 1, 0.2))
 ```
 
 Finally, we can estimate bias in our MR estimates using the `estimate_overlap_bias()` function:
 
-```{r}
+```{r eval = FALSE}
 bias_res <- dat_summarized %>%
   crossing(grid) %>%
   mutate(res = estimate_overlap_bias(samplesize_exposure = samplesize_exposure, samplesize_outcome = samplesize_outcome, n_variants = n_variants, rsq_exposure = rsq_exposure, overlap_prop = overlap_prop, ols_bias = ols_bias)) %>%
   unnest(res)
-
-bias_res
 ```
 
 We can optionally plot our results. We see that as the proportion of sample overlap increases, so does type 1 error, while bias remains relatively small. Type 1 error and bias are also magnified as the bias in the observational estimate increases:
 
-```{r}
+```{r eval = FALSE}
 bias_res %>%
   split_exposure() %>%
   pivot_longer(cols = c(bias, type1_error)) %>%

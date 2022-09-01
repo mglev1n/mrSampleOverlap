@@ -19,12 +19,7 @@ Imports:
 Suggests: 
     knitr,
     rmarkdown,
-    testthat,
-    tidyr,
-    tidyverse,
-    TwoSampleMR
-Remotes:
-    MRCIEU/TwoSampleMR
+    testthat
 VignetteBuilder: 
     knitr
 Encoding: UTF-8
