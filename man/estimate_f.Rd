@@ -11,7 +11,7 @@ estimate_f(samplesize_exposure, n_variants, rsq_exposure, lci_95 = FALSE)
 
 \item{n_variants}{(numeric) Number of genetic variants included in genetic instrument for the exposure of interest}
 
-\item{rsq_exposure}{(numeric) R^2^ value (coefficient of determination) of genetic instrument for the exposure of interest; used to estimate}
+\item{rsq_exposure}{(numeric) \eqn{R^2} value (coefficient of determination) of genetic instrument for the exposure of interest; used to estimate}
 
 \item{lci_95}{(logical; default = FALSE) If TRUE, the function will return the lower limit of the one-sided 95\% confidence interval of the F-statistic, which may represent a more conservative/less optimistic estimate}
 }

@@ -4,7 +4,7 @@
 #'
 #' @param samplesize_exposure (numeric) Sample size of population used to define genetic instrument for the exposure of interest
 #' @param n_variants (numeric) Number of genetic variants included in genetic instrument for the exposure of interest
-#' @param rsq_exposure (numeric) R^2^ value (coefficient of determination) of genetic instrument for the exposure of interest; used to estimate
+#' @param rsq_exposure (numeric) \eqn{R^2} value (coefficient of determination) of genetic instrument for the exposure of interest; used to estimate
 #' @param lci_95 (logical; default = FALSE) If TRUE, the function will return the lower limit of the one-sided 95% confidence interval of the F-statistic, which may represent a more conservative/less optimistic estimate
 #'
 #' @return Numeric vector containing the estimated F-statistic

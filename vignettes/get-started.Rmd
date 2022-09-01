@@ -152,7 +152,7 @@ bias_res %>%
 
 # Estimate F-statistic
 
-This is a generic function which can be used to estimate the F-statistic
+This is a generic function which can be used to estimate the F-statistic. Optionally, the function will return the lower limit of the one-sided 95% confidence interval of the F-statistic, which may represent a more conservative/less optimistic estimate.
     
 
   

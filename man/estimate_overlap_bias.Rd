@@ -25,9 +25,9 @@ estimate_overlap_bias(
 
 \item{n_variants}{(numeric) Number of genetic variants included in genetic instrument for the exposure of interest}
 
-\item{rsq_exposure}{(numeric) R^2^ value (coefficient of determination) of genetic instrument for the exposure of interest; used to estimate F-statistic}
+\item{rsq_exposure}{(numeric) \eqn{R^2} value (coefficient of determination) of genetic instrument for the exposure of interest; used to estimate F-statistic}
 
-\item{exp_f}{(numeric; optional) F-statistic for the genetic instrument (if provided, this value will be used, rather than an estimate based on the R^2^)}
+\item{exp_f}{(numeric; optional) F-statistic for the genetic instrument (if provided, this value will be used, rather than an estimate based on the \eqn{R^2})}
 
 \item{lci_95}{(logical; default = FALSE) If TRUE, the function will return estimates of bias and type 1 error based on the lower limit of the one-sided 95\% confidence interval of the F-statistic, which may represent a more conservative/less optimistic estimate of bias}
 
