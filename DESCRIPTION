@@ -14,13 +14,17 @@ BugReports: https://github.com/mglev1n/mrSampleOverlap/issues
 Imports: 
     dplyr,
     magrittr,
+    stats,
     tibble
 Suggests: 
     knitr,
     rmarkdown,
-    testthat
+    testthat,
+    tidyr,
+    tidyverse,
+    TwoSampleMR
 VignetteBuilder: 
     knitr
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.1

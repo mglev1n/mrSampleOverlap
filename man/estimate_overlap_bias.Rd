@@ -10,6 +10,7 @@ estimate_overlap_bias(
   n_variants,
   rsq_exposure,
   exp_f = NULL,
+  lci_95 = FALSE,
   case_prop = 0,
   ols_bias,
   overlap_prop,
@@ -27,6 +28,8 @@ estimate_overlap_bias(
 \item{rsq_exposure}{(numeric) R^2^ value (coefficient of determination) of genetic instrument for the exposure of interest; used to estimate F-statistic}
 
 \item{exp_f}{(numeric; optional) F-statistic for the genetic instrument (if provided, this value will be used, rather than an estimate based on the R^2^)}
+
+\item{lci_95}{(logical; default = FALSE) If TRUE, the function will return estimates of bias and type 1 error based on the lower limit of the one-sided 95\% confidence interval of the F-statistic, which may represent a more conservative/less optimistic estimate of bias}
 
 \item{case_prop}{(numeric; optional) Proportion of cases (eg. cases/total samplesize) if outcome is binary}
 
@@ -46,19 +49,23 @@ Estimate bias due to sample overlap
 }
 \examples{
 # Binary outcome
-estimate_overlap_bias(samplesize_exposure = 361194,
-                      samplesize_outcome = 1125328,
-                      case_prop = 0.035,
-                      rsq_exposure = 0.068,
-                      n_variants = 196,
-                      ols_bias = 0.2,
-                      overlap_prop = 0.3)
+estimate_overlap_bias(
+  samplesize_exposure = 361194,
+  samplesize_outcome = 1125328,
+  case_prop = 0.035,
+  rsq_exposure = 0.068,
+  n_variants = 196,
+  ols_bias = 0.2,
+  overlap_prop = 0.3
+)
 
 # Continuous outcome
-estimate_overlap_bias(samplesize_exposure = 361194,
-                      samplesize_outcome = 1125328,
-                      rsq_exposure = 0.068,
-                      n_variants = 196,
-                      ols_bias = 0.2,
-                      overlap_prop = 0.3)
+estimate_overlap_bias(
+  samplesize_exposure = 361194,
+  samplesize_outcome = 1125328,
+  rsq_exposure = 0.068,
+  n_variants = 196,
+  ols_bias = 0.2,
+  overlap_prop = 0.3
+)
 }

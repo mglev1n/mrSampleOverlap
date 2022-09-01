@@ -47,7 +47,7 @@ usethis::use_tibble()
 
 # Estimate bias due to sample overlap
 
-This function allows the user to estimate bias due to sample overlap in Mendelian randomization studies using the equations published in Burgess et. al. 2016 (DOI: [10.1002/gepi.21998](https://doi.org/10.1002/gepi.21998))
+This overall goal of this package is to allow the user to estimate bias due to participant overlap in Mendelian randomization studies using the equations published in Burgess et. al. 2016 (DOI: [10.1002/gepi.21998](https://doi.org/10.1002/gepi.21998)).
 
 <!-- 
 This first section shows:
@@ -65,6 +65,7 @@ This first section shows:
 #' @param n_variants (numeric) Number of genetic variants included in genetic instrument for the exposure of interest
 #' @param rsq_exposure (numeric) R^2^ value (coefficient of determination) of genetic instrument for the exposure of interest; used to estimate F-statistic
 #' @param exp_f (numeric; optional) F-statistic for the genetic instrument (if provided, this value will be used, rather than an estimate based on the R^2^)
+#' @param lci_95 (logical; default = FALSE) If TRUE, the function will return estimates of bias and type 1 error based on the lower limit of the one-sided 95% confidence interval of the F-statistic, which may represent a more conservative/less optimistic estimate of bias
 #' @param case_prop (numeric; optional) Proportion of cases (eg. cases/total samplesize) if outcome is binary
 #' @param ols_bias (numeric) Observational (biased) effect estimate (if known); otherwise, provide a hypothetical value
 #' @param overlap_prop (numeric; range = 0 to 1) Proportion of overlapping samples between exposure and outcome studies (if known); otherwise, provide a hypothetical value
@@ -72,30 +73,30 @@ This first section shows:
 #' @param var_y (numeric) Variance in the exposure; default is 1 when the exposure is reported in standard deviation units
 #'
 #' @import dplyr
-#' @import magrittr
+#' @importFrom stats pnorm
 #'
 #' @return A [tibble][tibble::tibble-package] containing columns for the bias and type1_error
 #' @export
 #'
-estimate_overlap_bias <- function(samplesize_exposure, samplesize_outcome, n_variants, rsq_exposure, exp_f = NULL, case_prop = 0, ols_bias, overlap_prop, var_x = 1, var_y = 1) {
+estimate_overlap_bias <- function(samplesize_exposure, samplesize_outcome, n_variants, rsq_exposure, exp_f = NULL, lci_95 = FALSE, case_prop = 0, ols_bias, overlap_prop, var_x = 1, var_y = 1) {
   # adapted from Burgess et. al. (2016) PMID: 27625185
-  
-  if(!is.null(exp_f)) {
+
+  if (!is.null(exp_f)) {
     expf <- exp_f
   } else {
-    expf <- (samplesize_exposure - n_variants - 1)/n_variants * rsq_exposure/(1 - rsq_exposure)
+    expf <- estimate_f(samplesize_exposure, n_variants, rsq_exposure, lci_95)
   }
-  
-  if(case_prop == 0) {
-    var <- var_y/(samplesize_outcome * var_x * rsq_exposure)
+
+  if (case_prop == 0) {
+    var <- var_y / (samplesize_outcome * var_x * rsq_exposure)
   } else {
-    var <- 1/(samplesize_outcome * rsq_exposure * var_x * case_prop * (1 - case_prop))
+    var <- 1 / (samplesize_outcome * rsq_exposure * var_x * case_prop * (1 - case_prop))
   }
-  
-  bias <- ols_bias * overlap_prop * (1/expf)
-  
+
+  bias <- ols_bias * overlap_prop * (1 / expf)
+
   type1_error <- 2 - pnorm(1.96 + bias / sqrt(var)) - pnorm(1.96 - bias / sqrt(var))
-  
+
   return(tibble(bias = bias, type1_error = type1_error))
 }
 ```
@@ -107,21 +108,25 @@ This should be a reproducible and working example
 
 ```{r examples-estimate_overlap_bias}
 # Binary outcome
-estimate_overlap_bias(samplesize_exposure = 361194,
-                      samplesize_outcome = 1125328,
-                      case_prop = 0.035,
-                      rsq_exposure = 0.068,
-                      n_variants = 196,
-                      ols_bias = 0.2,
-                      overlap_prop = 0.3)
+estimate_overlap_bias(
+  samplesize_exposure = 361194,
+  samplesize_outcome = 1125328,
+  case_prop = 0.035,
+  rsq_exposure = 0.068,
+  n_variants = 196,
+  ols_bias = 0.2,
+  overlap_prop = 0.3
+)
 
 # Continuous outcome
-estimate_overlap_bias(samplesize_exposure = 361194,
-                      samplesize_outcome = 1125328,
-                      rsq_exposure = 0.068,
-                      n_variants = 196,
-                      ols_bias = 0.2,
-                      overlap_prop = 0.3)
+estimate_overlap_bias(
+  samplesize_exposure = 361194,
+  samplesize_outcome = 1125328,
+  rsq_exposure = 0.068,
+  n_variants = 196,
+  ols_bias = 0.2,
+  overlap_prop = 0.3
+)
 ```
 
 <!--
@@ -130,28 +135,181 @@ Here are some unit tests to verify the function works as expected.
 
 ```{r tests-estimate_overlap_bias}
 test_that("estimate_overlap_bias works", {
-  res_df_bin <- estimate_overlap_bias(samplesize_exposure = 361194,
-                      samplesize_outcome = 1125328,
-                      case_prop = 0.035,
-                      rsq_exposure = 0.068,
-                      n_variants = 196,
-                      ols_bias = 0.2,
-                      overlap_prop = 0.3)
+  res_df_bin <- estimate_overlap_bias(
+    samplesize_exposure = 361194,
+    samplesize_outcome = 1125328,
+    case_prop = 0.035,
+    rsq_exposure = 0.068,
+    n_variants = 196,
+    ols_bias = 0.2,
+    overlap_prop = 0.3
+  )
+
+  res_df_continuous <- estimate_overlap_bias(
+    samplesize_exposure = 361194,
+    samplesize_outcome = 1125328,
+    rsq_exposure = 0.068,
+    n_variants = 196,
+    ols_bias = 0.2,
+    overlap_prop = 0.3
+  )
   
-  res_df_continuous <- estimate_overlap_bias(samplesize_exposure = 361194,
-                      samplesize_outcome = 1125328,
-                      rsq_exposure = 0.068,
-                      n_variants = 196,
-                      ols_bias = 0.2,
-                      overlap_prop = 0.3)
-  
+  res_df_expf <- estimate_overlap_bias(
+    samplesize_exposure = 361194,
+    samplesize_outcome = 1125328,
+    exp_f = 134,
+    rsq_exposure = 0.068,
+    n_variants = 196,
+    ols_bias = 0.2,
+    overlap_prop = 0.3
+  )
+
   expect_equal(nrow(res_df_bin), 1)
   expect_equal(ncol(res_df_bin), 2)
   expect_equal(nrow(res_df_continuous), 1)
   expect_equal(ncol(res_df_continuous), 2)
+  expect_equal(nrow(res_df_expf), 1)
+  expect_equal(ncol(res_df_expf), 2)
 })
 ```
 
+## Complex Example
+Here, we will use the `estimate_overlap_bias` function in a more complex example, to estimate the bias across a range of possible values of sample overlap and observational bias. 
+
+First, we will use the `TwoSampleMR` package to query the [MRC-IEU OpenGWAS Project](https://gwas.mrcieu.ac.uk/) for summary GWAS data to use for our exposure and outcome:
+```{r}
+library(tidyverse)
+library(TwoSampleMR)
+library(mrSampleOverlap)
+
+# extract genetic instruments for BMI
+ldl_exposure <- extract_instruments(outcomes = "ieu-a-300")
+
+# extract corresponding outcome data for coronary artery disease
+cad_outcome <- extract_outcome_data(snps = ldl_exposure$SNP, outcomes = "ebi-a-GCST005195")
+
+# harmonize effect alleles, and keep only alleles present in both exposure and outcome data
+dat_harmonized <- harmonise_data(ldl_exposure, cad_outcome) %>%
+  filter(mr_keep == TRUE)
+```
+
+Next, we use `TwoSampleMR::add_rsq()` to add the R^2^ value necessary to calculate bias, and summarize:
+```{r}
+dat_summarized <- dat_harmonized %>%
+  add_rsq() %>%
+  group_by(exposure) %>%
+  summarize(rsq_exposure = sum(rsq.exposure), n_variants = n(), samplesize_exposure = max(samplesize.exposure), samplesize_outcome = max(samplesize.outcome))
+```
+
+We can use the `tidyr::crossing()` function to generate a grid containing a range of values for sample overlap and observational bias
+```{r}
+grid <- tidyr::crossing(overlap_prop = seq(0, 1, 0.1),
+                        ols_bias = seq(0, 1, 0.2))
+```
+
+Finally, we can estimate bias in our MR estimates using the `estimate_overlap_bias()` function:
+```{r}
+bias_res <- dat_summarized %>%
+  crossing(grid) %>%
+  mutate(res = estimate_overlap_bias(samplesize_exposure = samplesize_exposure, samplesize_outcome = samplesize_outcome, n_variants = n_variants, rsq_exposure = rsq_exposure, overlap_prop = overlap_prop, ols_bias = ols_bias)) %>%
+  unnest(res)
+
+bias_res
+```
+
+We can optionally plot our results. We see that as the proportion of sample overlap increases, so does type 1 error, while bias remains relatively small. Type 1 error and bias are also magnified as the bias in the observational estimate increases:
+```{r}
+bias_res %>%
+  split_exposure() %>%
+  pivot_longer(cols = c(bias, type1_error)) %>%
+  ggplot(aes(overlap_prop, value, group = ols_bias, color = as.character(ols_bias))) +
+    geom_point() +
+    geom_line() +
+    facet_grid(rows = vars(exposure), 
+               cols = vars(name),
+               scales = "free_y") +
+  labs(x = "Proportion of Overlapping Participants",
+       y = "Value") +
+  scale_color_discrete(name = "Bias in \nObservational \nEstimate") +
+  theme_bw(base_size = 14) 
+```
+
+
+# Estimate F-statistic
+
+This is a generic function which can be used to estimate the F-statistic
+    
+```{r function-estimate_f}
+#' Estimate F-statistic
+#'
+#' @param samplesize_exposure (numeric) Sample size of population used to define genetic instrument for the exposure of interest
+#' @param n_variants (numeric) Number of genetic variants included in genetic instrument for the exposure of interest
+#' @param rsq_exposure (numeric) R^2^ value (coefficient of determination) of genetic instrument for the exposure of interest; used to estimate
+#' @param lci_95 (logical; default = FALSE) If TRUE, the function will return the lower limit of the one-sided 95% confidence interval of the F-statistic, which may represent a more conservative/less optimistic estimate
+#'
+#' @return Numeric vector containing the estimated F-statistic
+#' @export
+#'
+
+estimate_f <- function(samplesize_exposure, n_variants, rsq_exposure, lci_95 = FALSE) {
+  expf <- (samplesize_exposure - n_variants - 1) / n_variants * rsq_exposure / (1 - rsq_exposure)
+
+  if (lci_95) {
+    expf <- estimate_f_lci95(expf, n_variants, samplesize_exposure)
+  }
+
+  return(expf)
+}
+```
+  
+```{r example-estimate_f}
+estimate_f(samplesize_exposure = 361194, n_variants = 196, rsq_exposure = 0.068, lci_95 = FALSE)
+
+# return lower bound of one-sided 95% confidence interval of F-statistic
+estimate_f(samplesize_exposure = 361194, n_variants = 196, rsq_exposure = 0.068, lci_95 = TRUE)
+```
+  
+```{r tests-estimate_f}
+test_that("estimate_f works", {
+  expect_true(inherits(estimate_f, "function"))
+  expect_type(estimate_f(samplesize_exposure = 361194, n_variants = 196, rsq_exposure = 0.068, lci_95 = FALSE), "double")
+  expect_type(estimate_f(samplesize_exposure = 361194, n_variants = 196, rsq_exposure = 0.068, lci_95 = TRUE), "double")
+})
+```
+  
+
+```{r function-estimate_f_lci95}
+#' Estimate the lower limit of the one-sided 95% confidence interval of an F-statistic
+#'
+#' @return Numeric vector containing the estimated F-statistic
+#' @importFrom stats pf
+#' @noRd
+estimate_f_lci95 <- function(f, nu1, nu2) {
+  lambda <- f * nu1 * (nu2 - 2) / nu2 - nu1
+  lower <- f - 1
+  while (pf(lower, df1 = nu1, df2 = nu2, ncp = lambda) > 0.05) {
+    lower <- lower - 1
+  }
+  upper <- lower + 1
+  while (abs(pf((lower + upper) / 2, df1 = nu1, df2 = nu2, ncp = lambda) - 0.05) > 0.0001) {
+    if (pf((lower + upper) / 2, df1 = nu1, df2 = nu2, ncp = lambda) > 0.05) {
+      upper <- (lower + upper) / 2
+    }
+    if (pf((lower + upper) / 2, df1 = nu1, df2 = nu2, ncp = lambda) < 0.05) {
+      lower <- (lower + upper) / 2
+    }
+  }
+  return((lower + upper) / 2)
+}
+```
+  
+```{r tests-estimate_f_lci95}
+test_that("estimate_f_lci95 works", {
+  expect_true(inherits(estimate_f_lci95, "function"))
+  expect_type(estimate_f_lci95(134, 196, 361194), "double")
+})
+```
+  
 <!-- 
 # Inflate your package
 
