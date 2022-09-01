@@ -196,7 +196,7 @@ Here are some unit tests to verify the function works as expected.
 <div class="section level2">
 <h2 id="estimate-f-statistic">Estimate F-statistic<a class="anchor" aria-label="anchor" href="#estimate-f-statistic"></a>
 </h2>
-<p>This is a generic function which can be used to estimate the F-statistic</p>
+<p>This is a generic function which can be used to estimate the F-statistic. Optionally, the function will return the lower limit of the one-sided 95% confidence interval of the F-statistic, which may represent a more conservative/less optimistic estimate.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/estimate_f.html">estimate_f</a></span><span class="op">(</span>samplesize_exposure <span class="op">=</span> <span class="fl">361194</span>, n_variants <span class="op">=</span> <span class="fl">196</span>, rsq_exposure <span class="op">=</span> <span class="fl">0.068</span>, lci_95 <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 134.3818</span></span>
